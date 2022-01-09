@@ -1,0 +1,43 @@
+#include <IRremote.h>                // including Remote library
+const int RemotePin = 12;             // remote led output pin is connected to 9
+IRrecv irrecv(RemotePin);
+decode_results Remote;               // creating an object
+
+ 
+int relay = 7; // relay on/off  5V positive is connected TO 7
+const int sensor = 2; // SENSOR output is connected to 2 [here we use interrupt for sensor]
+
+void setup() {
+  // put your setup code here, to run once:
+  irrecv.enableIRIn();
+  pinMode(relay, OUTPUT);
+  Serial.begin(9600);
+  pinMode(3, INPUT);
+  attachInterrupt(digitalPinToInterrupt(3),obstacle_1,CHANGE);
+  
+  
+}
+void loop() {
+  
+if (irrecv.decode(&Remote)){
+        Serial.println(Remote.value, HEX);       // it will print the remote value in the serial Monitor
+         switch(Remote.value)
+{
+  case 0x1FEB04F:                               //5 
+ 
+ digitalWrite(relay, HIGH );
+  break;
+  case 0x1FE708F:                               //6
+  
+  digitalWrite(relay, LOW );
+  break;
+  }
+  irrecv.resume();                              // calling the resume function from the Ir sensor library
+}
+}
+void obstacle_1(){
+  
+  if(digitalRead(relay)==1){
+  digitalWrite(relay, LOW );
+  
+  }}
